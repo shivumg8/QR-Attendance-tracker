@@ -10,11 +10,11 @@ from django.db import IntegrityError
 
 
 # Generate QR Code using Render live URL
+# FacultyView/views.py
 def qrgenerator():
-    link = "https://qr-attendance-tracker-ytvw.onrender.com/student/"
+    link = "https://qr-attendance-tracker-ytvw.onrender.com/student/add_manually"
     qr = qrcode.make(link)
     qr.save("FacultyView/static/FacultyView/qrcode.png")
-
 
 # Faculty View Dashboard
 def faculty_view(request):
