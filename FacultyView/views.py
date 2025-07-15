@@ -22,6 +22,7 @@ def qrgenerator():
     qr = qrcode.make(link)
     qr.save("FacultyView/static/FacultyView/qrcode.png")
 
+
     qr = qrcode.make(link)
     qr.save("FacultyView/static/FacultyView/qrcode.png")
 
