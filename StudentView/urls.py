@@ -1,5 +1,5 @@
-from . import views
 from django.urls import path
+from . import views
 
 urlpatterns = [
     path("add_manually_post", views.add_manually_post, name="add_manually_post"),

@@ -9,7 +9,7 @@
   </head>
   <body>
     <header class="header">
-      <h1 class="header-title">Inderprastha Engineering College</h1>
+      <h1 class="header-title">Sambhram Engineering College</h1>
       <h2>Attendance Portal</h2>
     </header>
 
@@ -27,14 +27,14 @@
             <li class="student">
               <label class="student-label">
                 <span>
-                  {{student.s_roll}} - {{ student.s_fname }} {{student.s_lname}}
+                  {{ student.s_roll }} - {{ student.s_fname }} {{ student.s_lname }}
                 </span>
                 <span class="checkmark"></span>
                 <input
                   type="checkbox"
                   class="student-checkbox"
                   name="student-name"
-                  value="{{student.s_roll}}"
+                  value="{{ student.s_roll }}"
                 />
               </label>
             </li>
@@ -46,20 +46,31 @@
     </div>
 
     <footer class="footer">
-      <p>&copy; QR Attendance System 2023 - Team Hokage</p>
+      <p>&copy; QR Attendance System</p>
     </footer>
 
     <script>
-      const checkboxes = document.querySelectorAll(".student");
+      const checkboxes = document.querySelectorAll(".student-checkbox");
+      const form = document.querySelector(".attendance-form");
 
+      // Allow only one checkbox at a time
       checkboxes.forEach((checkbox) => {
         checkbox.addEventListener("change", () => {
           checkboxes.forEach((otherCheckbox) => {
             if (otherCheckbox !== checkbox) {
-              otherCheckbox.querySelector(".student-checkbox").checked = false;
+              otherCheckbox.checked = false;
             }
           });
         });
+      });
+
+      // Prevent submit if none selected
+      form.addEventListener("submit", (e) => {
+        const checked = Array.from(checkboxes).some(cb => cb.checked);
+        if (!checked) {
+          e.preventDefault();
+          alert("Please select a student before submitting.");
+        }
       });
     </script>
   </body>

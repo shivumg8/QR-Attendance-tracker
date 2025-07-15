@@ -1,0 +1,1 @@
+web: gunicorn QR_Attendance_System.wsgi:application
