@@ -1,8 +1,16 @@
 from django.shortcuts import render, redirect
-from FacultyView.models import Student, Attendance
-from django.http import HttpResponseRedirect
 from django.utils.timezone import now
+from django.db import IntegrityError
+from FacultyView.models import Student, Attendance
 
+# Student view for manual attendance
+def add_manually(request):
+    students = Student.objects.all().order_by("s_roll")
+    return render(request, "StudentView/StudentViewIndex.html", {
+        "students": students,
+    })
+
+# Student attendance POST handler
 def add_manually_post(request):
     if request.method == "POST":
         student_roll = request.POST.get("student-name")
@@ -28,5 +36,6 @@ def add_manually_post(request):
 
     return redirect("add_manually")
 
+# Confirmation page
 def submitted(request):
     return render(request, "StudentView/Submitted.html")

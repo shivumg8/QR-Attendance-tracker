@@ -36,7 +36,9 @@ class Attendance(models.Model):
     date = models.DateField(default=now)
 
     class Meta:
-        unique_together = ('student', 'date')
+        constraints = [
+            models.UniqueConstraint(fields=['student', 'date'], name='unique_attendance_per_day')
+        ]
 
     def __str__(self):
         return f"{self.student.s_roll} - {self.date}"
