@@ -15,7 +15,8 @@ def qrgenerator():
     s.connect(("8.8.8.8", 80))
     ip = s.getsockname()[0]
     s.close()
-    link = f"http://{ip}:8000/add_manually"
+    link = f"http://{ip}:8000/student/"
+
     qr = qrcode.make(link)
     qr.save("FacultyView/static/FacultyView/qrcode.png")
 
