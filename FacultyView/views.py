@@ -10,12 +10,17 @@ import openpyxl
 from django.db import IntegrityError
 
 
+# def qrgenerator():
+#     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#     s.connect(("8.8.8.8", 80))
+#     ip = s.getsockname()[0]
+#     s.close()
+#     link = f"http://{ip}:8000/student/"
 def qrgenerator():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    ip = s.getsockname()[0]
-    s.close()
-    link = f"http://{ip}:8000/student/"
+    import qrcode
+    link = "https://qr-attendance-tracker-ytvw.onrender.com/student/"
+    qr = qrcode.make(link)
+    qr.save("FacultyView/static/FacultyView/qrcode.png")
 
     qr = qrcode.make(link)
     qr.save("FacultyView/static/FacultyView/qrcode.png")
