@@ -6,17 +6,19 @@ from .models import Student, Attendance
 from datetime import date
 import qrcode
 import openpyxl
+import os
 from django.db import IntegrityError
 
-
-# Generate QR Code using Render live URL
-# FacultyView/views.py
+# Generate QR Code for attendance
 def qrgenerator():
+    file_path = "FacultyView/static/FacultyView/qrcode.png"
     link = "https://qr-attendance-tracker-ytvw.onrender.com/student/add_manually"
-    qr = qrcode.make(link)
-    qr.save("FacultyView/static/FacultyView/qrcode.png")
+    # Only generate if it doesn't exist
+    if not os.path.exists(file_path):
+        qr = qrcode.make(link)
+        qr.save(file_path)
 
-# Faculty View Dashboard
+# Faculty dashboard
 def faculty_view(request):
     if request.method == "POST":
         student_roll = request.POST.get("student_id")
@@ -30,7 +32,6 @@ def faculty_view(request):
     qrgenerator()
     students = Student.objects.filter(attendance__date=now().date()).distinct()
     return render(request, "FacultyView/FacultyViewIndex.html", {"students": students})
-
 
 # Export attendance to Excel
 def export_excel(request):
@@ -57,8 +58,7 @@ def export_excel(request):
     wb.save(response)
     return response
 
-
-# API to get today's present students
+# Today's present students API
 def get_present_students(request):
     today = date.today()
     attendances = Attendance.objects.filter(date=today).select_related("student")
@@ -68,39 +68,32 @@ def get_present_students(request):
     ]
     return JsonResponse({"students": data})
 
-
-# Manual Student Attendance Page
+# Manual attendance page
 def add_manually(request):
     students = Student.objects.all().order_by("s_roll")
     return render(request, "StudentView/StudentViewIndex.html", {
         "students": students,
     })
 
-
-# Handle Manual Attendance POST
+# Handle manual attendance POST
 def add_manually_post(request):
     if request.method == "POST":
         student_roll = request.POST.get("student-name")
-
         try:
             student = Student.objects.get(s_roll=student_roll)
             Attendance.objects.create(student=student)
             return redirect("submitted")
-
         except Student.DoesNotExist:
             return render(request, "StudentView/already_marked.html", {
                 "roll": student_roll,
                 "error": "Student not found!"
             })
-
         except IntegrityError:
             return render(request, "StudentView/already_marked.html", {
                 "roll": student_roll,
                 "error": "Attendance already marked for today."
             })
-
     return redirect("add_manually")
-
 
 # Submission success page
 def submitted(request):
