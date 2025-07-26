@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.utils.timezone import now
 from django.utils.dateparse import parse_date
+from django.views.decorators.http import require_GET
+from django.conf import settings
 from .models import Student, Attendance
 from datetime import date
 import qrcode
@@ -9,16 +11,19 @@ import openpyxl
 import os
 from django.db import IntegrityError
 
-# Generate QR Code for attendance
+# Generate QR Code for attendance with dynamic URL
 def qrgenerator():
-    file_path = "FacultyView/static/FacultyView/qrcode.png"
-    link = "https://qr-attendance-tracker-ytvw.onrender.com/student/add_manually"
+    file_path = os.path.join(settings.BASE_DIR, "FacultyView/static/FacultyView/qrcode.png")
+    link = f"{settings.QR_CODE_BASE_URL}/student/add_manually"
     # Only generate if it doesn't exist
     if not os.path.exists(file_path):
         qr = qrcode.make(link)
         qr.save(file_path)
+        print(f"QR code generated at {file_path} pointing to {link}")
+    else:
+        print("QR code already exists, not generating again.")
 
-# Faculty dashboard
+# Faculty dashboard view
 def faculty_view(request):
     if request.method == "POST":
         student_roll = request.POST.get("student_id")
@@ -33,7 +38,8 @@ def faculty_view(request):
     students = Student.objects.filter(attendance__date=now().date()).distinct()
     return render(request, "FacultyView/FacultyViewIndex.html", {"students": students})
 
-# Export attendance to Excel
+# Export attendance in Excel format
+@require_GET
 def export_excel(request):
     date_str = request.GET.get("date")
     date_obj = parse_date(date_str)
@@ -41,6 +47,7 @@ def export_excel(request):
         return HttpResponse("Invalid date", status=400)
 
     records = Attendance.objects.filter(date=date_obj).select_related("student")
+
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.append(["Roll No", "First Name", "Last Name", "Branch", "Year", "Section", "Date"])
@@ -53,12 +60,15 @@ def export_excel(request):
             s.s_section.section, r.date
         ])
 
-    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
     response["Content-Disposition"] = f'attachment; filename="Attendance_{date_str}.xlsx"'
     wb.save(response)
     return response
 
-# Today's present students API
+# API to get today's present students
+@require_GET
 def get_present_students(request):
     today = date.today()
     attendances = Attendance.objects.filter(date=today).select_related("student")
@@ -71,17 +81,15 @@ def get_present_students(request):
 # Manual attendance page
 def add_manually(request):
     students = Student.objects.all().order_by("s_roll")
-    return render(request, "StudentView/StudentViewIndex.html", {
-        "students": students,
-    })
+    return render(request, "StudentView/StudentViewIndex.html", {"students": students})
 
-# Handle manual attendance POST
+# Handle manual attendance POST requests
 def add_manually_post(request):
     if request.method == "POST":
         student_roll = request.POST.get("student-name")
         try:
             student = Student.objects.get(s_roll=student_roll)
-            Attendance.objects.create(student=student)
+            Attendance.objects.create(student=student, date=now().date())
             return redirect("submitted")
         except Student.DoesNotExist:
             return render(request, "StudentView/already_marked.html", {
@@ -95,6 +103,6 @@ def add_manually_post(request):
             })
     return redirect("add_manually")
 
-# Submission success page
+# Submission successful page
 def submitted(request):
     return render(request, "StudentView/Submitted.html")
