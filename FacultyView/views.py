@@ -11,19 +11,25 @@ import openpyxl
 import os
 from django.db import IntegrityError
 
-# Generate QR Code for attendance with dynamic URL
 def qrgenerator():
-    file_path = os.path.join(settings.BASE_DIR, "FacultyView/static/FacultyView/qrcode.png")
-    link = f"{settings.QR_CODE_BASE_URL}/student/add_manually"
-    # Only generate if it doesn't exist
-    if not os.path.exists(file_path):
-        qr = qrcode.make(link)
-        qr.save(file_path)
-        print(f"QR code generated at {file_path} pointing to {link}")
-    else:
-        print("QR code already exists, not generating again.")
+    file_path = os.path.join("FacultyView", "static", "FacultyView", "qrcode.png")
 
-# Faculty dashboard view
+    # Remove old QR
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        print("Old QR code deleted.")
+
+    # Use Render domain from settings
+    base_url = getattr(settings, "QR_CODE_BASE_URL", "https://qr-attendance-tracker-ytvw.onrender.com")
+    full_url = f"{base_url}/student/add_manually"
+
+    print("QR_CODE_BASE_URL:", base_url)
+    print("Full QR URL:", full_url)
+
+    img = qrcode.make(full_url)
+    img.save(file_path)
+    print(f"New QR code generated at {file_path} pointing to {full_url}")
+
 def faculty_view(request):
     if request.method == "POST":
         student_roll = request.POST.get("student_id")
@@ -38,7 +44,6 @@ def faculty_view(request):
     students = Student.objects.filter(attendance__date=now().date()).distinct()
     return render(request, "FacultyView/FacultyViewIndex.html", {"students": students})
 
-# Export attendance in Excel format
 @require_GET
 def export_excel(request):
     date_str = request.GET.get("date")
@@ -67,7 +72,6 @@ def export_excel(request):
     wb.save(response)
     return response
 
-# API to get today's present students
 @require_GET
 def get_present_students(request):
     today = date.today()
@@ -78,12 +82,10 @@ def get_present_students(request):
     ]
     return JsonResponse({"students": data})
 
-# Manual attendance page
 def add_manually(request):
     students = Student.objects.all().order_by("s_roll")
     return render(request, "StudentView/StudentViewIndex.html", {"students": students})
 
-# Handle manual attendance POST requests
 def add_manually_post(request):
     if request.method == "POST":
         student_roll = request.POST.get("student-name")
@@ -103,6 +105,5 @@ def add_manually_post(request):
             })
     return redirect("add_manually")
 
-# Submission successful page
 def submitted(request):
     return render(request, "StudentView/Submitted.html")

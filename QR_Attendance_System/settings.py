@@ -16,7 +16,8 @@ if RENDER_EXTERNAL_HOSTNAME:
 ALLOWED_HOSTS.append('qr-attendance-tracker-ytvw.onrender.com')
 
 # Define QR code base url for dynamic QR generation
-QR_CODE_BASE_URL = os.getenv("QR_CODE_BASE_URL", "http://localhost:8000")
+QR_CODE_BASE_URL = os.getenv("QR_CODE_BASE_URL", "https://qr-attendance-tracker-ytvw.onrender.com")
+
 
 
 INSTALLED_APPS = [

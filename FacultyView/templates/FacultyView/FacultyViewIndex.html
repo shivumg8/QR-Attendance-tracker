@@ -1,307 +1,99 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QR Attendance System</title>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap" rel="stylesheet" />
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-
-    <!-- Custom Styles -->
+<head>
+    <meta charset="UTF-8">
+    <title>Faculty Dashboard</title>
     <style>
-      :root {
-        --main-bg: #f6f1ec;
-        --card-bg: #fff3e0;
-        --primary: #a1887f;
-        --primary-dark: #6d4c41;
-        --accent: #ffb74d;
-        --danger: #d32f2f;
-        --success: #81c784;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Rubik', sans-serif;
-      }
-
-      body {
-        background: var(--main-bg);
-        color: var(--primary-dark);
-        animation: fadeIn 1s ease-in;
-      }
-
-      header {
-        background-color: var(--primary-dark);
-        color: #fff;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      }
-
-      main {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-        padding: 20px;
-      }
-
-      .marked-list,
-      .attendance-container {
-        flex: 1;
-        min-width: 350px;
-        max-width: 600px;
-        margin: 20px;
-        background: var(--card-bg);
-        border-radius: 15px;
-        padding: 25px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        animation: fadeInUp 0.8s ease;
-      }
-
-      .present-list {
-        margin: 20px 0 10px;
-        font-weight: 600;
-      }
-
-      .student-list {
-        list-style: none;
-      }
-
-      .student {
-        margin: 10px 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 15px;
-        border-radius: 10px;
-        background: #fbe9e7;
-        transition: transform 0.2s ease;
-      }
-
-      .student:hover {
-        transform: scale(1.02);
-      }
-
-      .highlight {
-        background: var(--success) !important;
-        animation: pop 0.5s ease;
-      }
-
-      @keyframes pop {
-        0% { transform: scale(0.95); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-      }
-
-      .delete-button {
-        background: var(--danger);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        padding: 8px 10px;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-      }
-
-      .delete-button:active {
-        transform: scale(0.9);
-      }
-
-      button {
-        background: var(--accent);
-        border: none;
-        padding: 10px 18px;
-        border-radius: 10px;
-        font-weight: 600;
-        color: #4e342e;
-        margin-top: 15px;
-        margin-right: 10px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      button:hover {
-        background: #ffa000;
-        transform: scale(1.05);
-      }
-
-      button:active {
-        transform: scale(0.95);
-      }
-
-      .attendance-card {
-        text-align: center;
-      }
-
-      .attendance-card img {
-        margin-top: 20px;
-        border: 5px solid var(--primary-dark);
-        border-radius: 15px;
-        transition: transform 0.3s ease;
-      }
-
-      .attendance-card img:hover {
-        transform: rotate(1deg) scale(1.05);
-      }
-
-      .hint {
-        margin-top: 10px;
-        font-size: 0.95rem;
-        color: #6d4c41;
-        font-style: italic;
-      }
-
-      footer {
-        text-align: center;
-        padding: 20px;
-        margin-top: 30px;
-        background-color: #e0e0e0;
-        color: #555;
-      }
-
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef;
+            margin: 0;
+            padding: 0;
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
         }
-      }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .qr-code {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .qr-code img {
+            border: 4px solid #444;
+            padding: 8px;
+            background: #fff;
+        }
+        .student-list {
+            margin-top: 30px;
+        }
+        .student-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .student-list li {
+            background: #f7f7f7;
+            margin: 6px 0;
+            padding: 10px 15px;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .download-btn {
+            display: block;
+            text-align: center;
+            margin: 30px 0;
+        }
+        .download-btn a {
+            background-color: #007bff;
+            color: #fff;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .download-btn a:hover {
+            background-color: #0056b3;
+        }
     </style>
-  </head>
+</head>
+<body>
+    <div class="container">
+        <h1>Faculty Dashboard</h1>
 
-  <body>
-    <header>
-      <h1>Sambhram Institue of Technology</h1>
-      <h2>Attendance Portal</h2>
-    </header>
-
-    <main>
-      <div class="marked-list">
-        <h2 id="present-count">Present Count: {{ students|length }}</h2>
-        <h3 class="present-list">Present Students</h3>
-
-        <form class="attendance-form" method="POST">
-          {% csrf_token %}
-          <ul class="student-list" id="student-list">
-            {% for student in students %}
-            <li class="student" id="student-{{ student.s_roll }}">
-              <label class="student-label">
-                <span class="student-name">{{student.s_roll}} - {{ student.s_fname }} {{student.s_lname }}</span>
-                <button type="submit" name="student_id" value="{{student.s_roll}}" class="delete-button" title="Remove from list">
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-              </label>
-            </li>
-            {% endfor %}
-          </ul>
-        </form>
-
-        <a href="{% url 'add_manually' %}"><button>➕ Add Manually</button></a>
-        <a href="/"><button>✔ Submit</button></a>
-      </div>
-
-      <div class="attendance-container">
-        <div class="attendance-card">
-          <h2>📶 Connect to College Wi-Fi and Scan the QR Code to Mark Attendance</h2>
-          <img src="{% static 'FacultyView/qrcode.png' %}" alt="QR Code" width="220" height="220" />
-          <p class="hint">Please scan the QR code to mark your attendance.</p>
+        <div class="qr-code">
+            <h2>Scan to Mark Attendance</h2>
+            <img src="{% static 'FacultyView/qrcode.png' %}" alt="QR Code" width="200" height="200">
+            <p>
+                Or open manually: 
+                <a href="https://qr-attendance-tracker-ytvw.onrender.com/student/add_manually" target="_blank">
+                    /student/add_manually
+                </a>
+            </p>
         </div>
-      </div>
-    </main>
 
-    <form action="{% url 'export_excel' %}" method="GET" style="text-align:center; margin: 20px;">
-      <label for="date">Export Attendance for Date:</label>
-      <input type="date" name="date" required>
-      <button type="submit">📥 Export as Excel</button>
-    </form>
+        <div class="student-list">
+            <h2>Students Present Today</h2>
+            <ul>
+                {% for student in students %}
+                    <li>{{ student.s_roll }} - {{ student.s_fname }} {{ student.s_lname }}</li>
+                {% empty %}
+                    <li>No attendance marked yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
 
-    <footer>
-      <p>&copy; QR Attendance System</p>
-    </footer>
-
-    <!-- Real-time update script -->
-    <script>
-      let existingIds = new Set();
-
-      function fetchStudents() {
-        fetch("/api/present_students")
-          .then(res => res.json())
-          .then(data => {
-            const list = document.getElementById("student-list");
-            const newSet = new Set();
-            let count = 0;
-
-            data.students.forEach(stu => {
-              count++;
-              newSet.add(stu.roll);
-              if (!existingIds.has(stu.roll)) {
-                const li = document.createElement("li");
-                li.className = "student highlight";
-                li.id = `student-${stu.roll}`;
-                li.innerHTML = `
-                  <label class="student-label">
-                    <span class="student-name">${stu.roll} - ${stu.name}</span>
-                    <button type="submit" name="student_id" value="${stu.roll}" class="delete-button">
-                      <i class="fas fa-trash-alt"></i>
-                    </button>
-                  </label>
-                `;
-                list.appendChild(li);
-              }
-            });
-
-            existingIds = newSet;
-            document.getElementById("present-count").innerText = `Present Count: ${count}`;
-          });
-      }
-
-      setInterval(fetchStudents, 5000);
-    </script>
-    <script>
-  function fetchPresentStudents() {
-    fetch("/api/present_students")
-      .then(response => response.json())
-      .then(data => {
-        const list = document.getElementById("student-list");
-        list.innerHTML = ""; // Clear old data
-
-        data.students.forEach(student => {
-          const li = document.createElement("li");
-          li.className = "student";
-          li.innerHTML = `
-            <label class="student-label">
-              <span class="student-name">${student.roll} - ${student.name}</span>
-              <button type="submit" name="student_id" value="${student.roll}" class="delete-button">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </label>
-          `;
-          list.appendChild(li);
-        });
-      });
-  }
-
-  // Initial load
-  fetchPresentStudents();
-
-  // Poll every 5 seconds
-  setInterval(fetchPresentStudents, 5000);
-</script>
-
-  </body>
+        <div class="download-btn">
+            <a href="{% url 'export_excel' %}">Download Attendance Excel</a>
+        </div>
+    </div>
+</body>
 </html>
